@@ -1,0 +1,147 @@
+/* ===========================
+   ANIMATIONS.CSS
+   =========================== */
+
+/* ── KEYFRAMES ────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes ripple {
+  0% { transform: scale(0); opacity: 0.6; }
+  100% { transform: scale(4); opacity: 0; }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(124,58,237,0.2); }
+  50% { box-shadow: 0 0 40px rgba(124,58,237,0.5); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes waveBar {
+  0%, 100% { transform: scaleY(0.4); }
+  50% { transform: scaleY(1); }
+}
+
+/* ── PAGE TRANSITIONS ─────────────────────────────── */
+.page-enter {
+  animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.page-fade {
+  animation: fadeIn 0.3s ease both;
+}
+
+/* ── CARD STAGGER ─────────────────────────────────── */
+.stagger-1 { animation: slideInUp 0.4s 0.05s cubic-bezier(0.16,1,0.3,1) both; }
+.stagger-2 { animation: slideInUp 0.4s 0.10s cubic-bezier(0.16,1,0.3,1) both; }
+.stagger-3 { animation: slideInUp 0.4s 0.15s cubic-bezier(0.16,1,0.3,1) both; }
+.stagger-4 { animation: slideInUp 0.4s 0.20s cubic-bezier(0.16,1,0.3,1) both; }
+.stagger-5 { animation: slideInUp 0.4s 0.25s cubic-bezier(0.16,1,0.3,1) both; }
+.stagger-6 { animation: slideInUp 0.4s 0.30s cubic-bezier(0.16,1,0.3,1) both; }
+
+/* ── ANIMATED GRADIENT LOGO ───────────────────────── */
+.animated-gradient {
+  background: linear-gradient(270deg, #7c3aed, #06b6d4, #ec4899, #7c3aed);
+  background-size: 300% 300%;
+  animation: gradientShift 4s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── SKELETON LOADER ──────────────────────────────── */
+@keyframes shimmer {
+  from { background-position: -100% 0; }
+  to { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-card) 25%,
+    var(--bg-card-hover) 50%,
+    var(--bg-card) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: var(--radius-md);
+}
+
+.skeleton-text { height: 14px; border-radius: 4px; }
+.skeleton-title { height: 20px; width: 60%; border-radius: 4px; }
+.skeleton-card { height: 200px; border-radius: var(--radius-xl); }
+
+/* ── GLOW EFFECTS ─────────────────────────────────── */
+.glow-violet {
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+/* ── SOUND WAVE BARS ──────────────────────────────── */
+.sound-wave {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 20px;
+}
+
+.sound-wave .bar {
+  width: 3px;
+  background: var(--gradient-primary);
+  border-radius: 999px;
+  transform-origin: bottom;
+}
+
+.sound-wave .bar:nth-child(1) { animation: waveBar 0.8s 0.0s ease-in-out infinite; }
+.sound-wave .bar:nth-child(2) { animation: waveBar 0.8s 0.1s ease-in-out infinite; }
+.sound-wave .bar:nth-child(3) { animation: waveBar 0.8s 0.2s ease-in-out infinite; }
+.sound-wave .bar:nth-child(4) { animation: waveBar 0.8s 0.3s ease-in-out infinite; }
+.sound-wave .bar:nth-child(5) { animation: waveBar 0.8s 0.2s ease-in-out infinite; }
+
+/* ── FLOAT ────────────────────────────────────────── */
+.float { animation: float 3s ease-in-out infinite; }
+
+/* ── TOAST DISMISS ────────────────────────────────── */
+.toast-dismiss {
+  animation: slideInRight 0.3s ease reverse forwards;
+}

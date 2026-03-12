@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Music Manager — Organize seus projetos musicais do conceito ao lançamento">
+  <title>Music Manager 🎵</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/animations.css">
+</head>
+<body>
+<div class="app-wrapper">
+
+  <!-- ── SIDEBAR ───────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">♪</div>
+      <div class="logo-text">
+        Music Manager
+        <span>Studio Criativo</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Menu</div>
+      <a class="nav-link active" data-route="dashboard" onclick="navigate('dashboard')">
+        <span class="nav-icon">◈</span> Visão geral
+      </a>
+      <a class="nav-link" data-route="projects" onclick="navigate('projects')">
+        <span class="nav-icon">◇</span> Projetos
+      </a>
+
+      <div class="nav-section-label" style="margin-top:16px">Criar</div>
+      <a class="nav-link" onclick="navigate('projects'); setTimeout(()=>App.openNewProjectModal(),200)">
+        <span class="nav-icon">+</span> Novo projeto
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div style="font-size:11px;color:var(--text-muted);line-height:1.6">
+        <div style="font-weight:600;color:var(--text-secondary);margin-bottom:2px">Music Manager</div>
+        Para artistas independentes
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN CONTENT ────────────────────────── -->
+  <div class="main-content">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="hamburger" onclick="toggleSidebar()">☰</button>
+        <h1 class="topbar-title" id="topbar-title">Visão geral</h1>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary btn-sm" onclick="App.openNewProjectModal()">Novo projeto</button>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="page-content" id="page-content">
+      <div class="loading-spinner"><div class="spinner"></div></div>
+    </main>
+  </div><!-- /main-content -->
+
+</div><!-- /app-wrapper -->
+
+<!-- ════════════════════════════════════════════════
+     MODALS
+     ════════════════════════════════════════════════ -->
+
+<!-- ── PROJECT MODAL ────────────────────────────── -->
+<div class="modal-overlay" id="project-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="project-modal-title">Novo projeto</h2>
+      <button class="modal-close" onclick="closeModal('project-modal')">×</button>
+    </div>
+
+    <form id="project-form" onsubmit="event.preventDefault(); saveProject()">
+      <input type="hidden" id="project-id">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="project-name">Nome do Projeto *</label>
+          <input type="text" id="project-name" class="form-control" placeholder="Ex: Ritmo da Noite" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="project-type">Tipo</label>
+          <select id="project-type" class="form-control">
+            <option value="Single">Single</option>
+            <option value="EP">EP</option>
+            <option value="Mixtape">Mixtape</option>
+            <option value="Álbum">Álbum</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="project-desc">Descrição</label>
+        <textarea id="project-desc" class="form-control" rows="3" placeholder="Descreva o conceito do projeto..."></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="project-release">Data de Lançamento</label>
+          <input type="date" id="project-release" class="form-control">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="project-status">Status</label>
+          <select id="project-status" class="form-control">
+            <option value="em produção">Em produção</option>
+            <option value="finalizado">Finalizado</option>
+            <option value="lançado">Lançado</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="project-tags">Gêneros / Tags <span style="color:var(--text-muted);font-weight:400">(separados por vírgula)</span></label>
+        <input type="text" id="project-tags" class="form-control" placeholder="Ex: Trap, R&B, Pop">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Capa do Projeto</label>
+        <div class="upload-zone" id="cover-upload-zone">
+          <div class="upload-icon">↑</div>
+          <p><strong>Clique</strong> ou arraste uma imagem aqui</p>
+          <p style="margin-top:3px;font-size:11px">JPG, PNG, WEBP até 50MB</p>
+          <img id="cover-preview" class="upload-preview" style="display:none" alt="preview">
+        </div>
+        <input type="file" id="cover-file-input" accept="image/*" style="display:none">
+        <input type="hidden" id="project-cover-url">
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('project-modal')">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Salvar projeto</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ── TRACK MODAL ───────────────────────────────── -->
+<div class="modal-overlay" id="track-modal">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-header">
+      <h2 class="modal-title" id="track-modal-title">Adicionar faixa</h2>
+      <button class="modal-close" onclick="closeModal('track-modal')">×</button>
+    </div>
+
+    <form id="track-form" onsubmit="event.preventDefault(); saveTrack()">
+      <input type="hidden" id="track-id">
+      <input type="hidden" id="track-project-id">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="track-title-input">Título da Faixa *</label>
+          <input type="text" id="track-title-input" class="form-control" placeholder="Ex: Noite Estrelada" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="track-number">Número da Faixa</label>
+          <input type="number" id="track-number" class="form-control" min="1" placeholder="1">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="track-status">Status da Faixa</label>
+        <select id="track-status" class="form-control">
+          <option value="em produção">🔨 Em Produção</option>
+          <option value="gravada">🎤 Gravada</option>
+          <option value="mixagem">🎚️ Mixagem</option>
+          <option value="finalizada">✅ Finalizada</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="track-beat-link">Link do Beat (externo)</label>
+        <input type="url" id="track-beat-link" class="form-control" placeholder="https://soundcloud.com/...">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Upload do Beat (MP3/WAV)</label>
+        <div class="upload-zone" id="beat-upload-zone">
+          <div class="upload-icon">↑</div>
+          <p><strong>Clique</strong> ou arraste o arquivo de áudio</p>
+          <p style="margin-top:3px;font-size:11px">MP3, WAV, OGG até 50MB</p>
+        </div>
+        <input type="file" id="beat-file-input" accept="audio/*" style="display:none">
+        <input type="hidden" id="beat-file-url">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="track-lyrics">Letra Completa</label>
+        <textarea id="track-lyrics" class="form-control" rows="6" placeholder="Cole a letra da música aqui..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="track-notes">Anotações Criativas</label>
+        <textarea id="track-notes" class="form-control" rows="3" placeholder="Referências, ideias, notas de produção..."></textarea>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('track-modal')">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Salvar faixa</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ── TRACK DETAIL MODAL ────────────────────────── -->
+<div class="modal-overlay" id="track-detail-modal">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-header">
+      <div>
+        <h2 class="modal-title" id="td-title">Faixa</h2>
+        <div id="td-status" style="margin-top:4px"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal('track-detail-modal')">×</button>
+    </div>
+
+    <div id="td-audio" style="margin-bottom:20px"></div>
+
+    <div class="form-group">
+      <label class="form-label">Letra</label>
+      <div class="lyrics-block" id="td-lyrics"></div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Anotações Criativas</label>
+      <div class="lyrics-block" id="td-notes" style="min-height:60px"></div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('track-detail-modal')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── POST MODAL ────────────────────────────────── -->
+<div class="modal-overlay" id="post-modal">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-header">
+      <h2 class="modal-title" id="post-modal-title">Novo post</h2>
+      <button class="modal-close" onclick="closeModal('post-modal')">×</button>
+    </div>
+
+    <form id="post-form" onsubmit="event.preventDefault(); savePost()">
+      <input type="hidden" id="post-id">
+      <input type="hidden" id="post-project-id">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="post-platform">Plataforma *</label>
+          <select id="post-platform" class="form-control" required>
+            <option value="">Selecionar...</option>
+            <option value="Instagram">Instagram</option>
+            <option value="TikTok">TikTok</option>
+            <option value="YouTube">YouTube</option>
+            <option value="Twitter">Twitter / X</option>
+            <option value="Facebook">Facebook</option>
+            <option value="Spotify">Spotify</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="post-status">Status do Post</label>
+          <select id="post-status" class="form-control">
+            <option value="ideia">Ideia</option>
+            <option value="pronto">Pronto</option>
+            <option value="publicado">Publicado</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="post-planned-date">Data Planejada</label>
+        <input type="date" id="post-planned-date" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="post-caption">Legenda / Texto do Post</label>
+        <textarea id="post-caption" class="form-control" rows="4" placeholder="Escreva a legenda planejada..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="post-idea-notes">Ideias e Notas</label>
+        <textarea id="post-idea-notes" class="form-control" rows="2" placeholder="Referências visuais, hashtags, ideias..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Upload de Mídia (imagem/vídeo)</label>
+        <div class="upload-zone" id="post-media-zone">
+          <div class="upload-icon">↑</div>
+          <p><strong>Clique</strong> ou arraste a mídia aqui</p>
+          <p style="margin-top:3px;font-size:11px">Imagem ou vídeo até 50MB</p>
+          <img id="post-media-preview" class="upload-preview" style="display:none" alt="preview">
+        </div>
+        <input type="file" id="post-media-input" accept="image/*,video/*" style="display:none">
+        <input type="hidden" id="post-media-url">
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('post-modal')">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Salvar post</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ── TOAST CONTAINER ───────────────────────────── -->
+<div id="toast-container" class="toast-container"></div>
+
+<!-- ── SCRIPTS ────────────────────────────────────── -->
+<script src="/static/js/api.js"></script>
+<script src="/static/js/player.js"></script>
+<script src="/static/js/dashboard.js"></script>
+<script src="/static/js/projects.js"></script>
+<script src="/static/js/tracks.js"></script>
+<script src="/static/js/marketing.js"></script>
+<script src="/static/js/app.js"></script>
+</body>
+</html>
