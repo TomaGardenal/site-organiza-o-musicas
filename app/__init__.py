@@ -24,6 +24,11 @@ def create_app():
 
     db.init_app(app)
     migrate.init_app(app, db)
+    
+    # Initialize background scheduler
+    from app.services.scheduler import start_scheduler
+    start_scheduler(app)
+
 
     from app.models import Project, Track, MarketingPost  # noqa
 

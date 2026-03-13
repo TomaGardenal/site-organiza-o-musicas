@@ -22,7 +22,7 @@ function renderMarketingTab(posts, projectId) {
           <div class="post-caption">${escapeHtml(p.caption) || '<em style="color:var(--text-muted)">Sem legenda</em>'}</div>
           ${p.idea_notes ? `<div style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">💡 ${escapeHtml(p.idea_notes)}</div>` : ''}
           <div style="display:flex;align-items:center;justify-content:space-between">
-            <span class="post-date">📅 ${p.planned_date || 'Sem data'}</span>
+            <span class="post-date">📅 ${p.planned_date ? new Date(p.planned_date).toLocaleString('pt-BR', {dateStyle: 'short', timeStyle: 'short'}) : 'Sem data/hora'}</span>
             <div style="display:flex;gap:6px">
               <button class="btn-icon" onclick="openEditPostModal(${p.id}, ${projectId})" title="Editar">✏️</button>
               <button class="btn-icon" onclick="deletePost(${p.id}, ${projectId})" title="Excluir">🗑️</button>
